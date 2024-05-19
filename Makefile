@@ -41,34 +41,43 @@ endef
 define Package/wfb-rx
   $(call Package/$(PKG_NAME)/Default)
   DEPENDS:=+libpcap +libsodium +libstdcpp
-  TITLE:=Next generation of long-range packet radio link based on raw WiFi radio RX
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Wireless
+  TITLE+= wfb_rx
   URL:=https://github.com/svpcom/wfb-ng
 endef
 
 define Package/wfb-rx/description
-  Next generation of long-range packet radio link based on raw WiFi radio RX
+  $(Package/$(PKG_NAME)/description) RX
 endef
 
 define Package/wfb-tx
   $(call Package/$(PKG_NAME)/Default)
   DEPENDS:=+libpcap +libsodium +libstdcpp
-  TITLE:=Next generation of long-range packet radio link based on raw WiFi radio TX
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Wireless
+  TITLE+= wfb_tx
   URL:=https://github.com/svpcom/wfb-ng
 endef
 
 define Package/wfb-tx/description
-  Next generation of long-range packet radio link based on raw WiFi radio TX
+  $(Package/$(PKG_NAME)/description) TX
 endef
 
 define Package/wfb-keygen
   $(call Package/$(PKG_NAME)/Default)
   DEPENDS:=+libpcap +libsodium
-  TITLE:=Next generation of long-range packet radio link based on raw WiFi radio KEYGEN
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Wireless
+  TITLE+= wfb_keygen
   URL:=https://github.com/svpcom/wfb-ng
 endef
 
 define Package/wfb-keygen/description
-  Next generation of long-range packet radio link based on raw WiFi radio KEYGEN
+  $(Package/$(PKG_NAME)/description) KEYGEN
 endef
 
 
