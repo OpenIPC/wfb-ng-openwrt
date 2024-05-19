@@ -14,18 +14,14 @@ PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=LICENSE
 PKG_CPE_ID:=cpe:/w:wfb-ng:wfb-ng
 
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=https://codeload.github.com/svpcom/wfb-ng/tar.gz/$(PKG_NAME)-$(PKG_VERSION)?
-# PKG_HASH:=a24c425ad0963ced57c24ae8535692340aab39ff09897ecf5d11eb698f24356c
-# PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_NAME)-$(PKG_VERSION)
-
-SOURCE_DIR:=/home/cc/OpenIPC/source_CC/wfb-ng-23.08.1
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/svpcom/wfb-ng/tar.gz/$(PKG_NAME)-$(PKG_VERSION)?
+PKG_HASH:=a24c425ad0963ced57c24ae8535692340aab39ff09897ecf5d11eb698f24356c
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1
 
 PKG_MAINTAINER:=Ruixi Zhou <zhouruixi@gmail.com>
-
-# PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -40,24 +36,6 @@ endef
 
 define Package/wfb-ng/description
   Next generation of long-range packet radio link based on raw WiFi radio
-endef
-
-
-	# $(call Build/Prepare/Default)
-	# echo "$(PKG_VERSION)_rev$(PKG_SOURCE_VERSION)" > $(PKG_BUILD_DIR)/VERSION
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	cp -r $(SOURCE_DIR)/* $(PKG_BUILD_DIR)
-	$(Build/Patch)
-endef
-
-# MAKE_FLAGS += all_bin
-define Build/Compile
-        $(MAKE) -C $(PKG_BUILD_DIR) \
-               CC="$(TARGET_CC)" \
-               CXX="$(TARGET_CXX)" \
-           CFLAGS="$(TARGET_CFLAGS)" \
-          LDFLAGS="$(TARGET_LDFLAGS)"
 endef
 
 define Package/wfb-ng/install
