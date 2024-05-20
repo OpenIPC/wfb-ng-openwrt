@@ -80,6 +80,17 @@ define Package/wfb-keygen/description
   $(Package/$(PKG_NAME)/description) KEYGEN
 endef
 
+define Package/wfb-key
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Wireless
+  TITLE+= wfb key used by FPVue
+  URL:=https://github.com/svpcom/wfb-ng
+endef
+
+define Package/wfb-key/description
+  $(Package/$(PKG_NAME)/description) wfb key used by FPVue
+endef
 
 define Package/wfb-rx/install
 	$(INSTALL_DIR) $(1)/usr/bin
@@ -96,6 +107,12 @@ define Package/wfb-keygen/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_keygen $(1)/usr/bin/
 endef
 
+define Package/wfb-key/install
+	$(INSTALL_DIR) $(1)/etc/
+	$(INSTALL_DATA) $(CURDIR)/files/FPVue.key $(1)/etc/wfb.key
+endef
+
 $(eval $(call BuildPackage,wfb-rx))
 $(eval $(call BuildPackage,wfb-tx))
 $(eval $(call BuildPackage,wfb-keygen))
+$(eval $(call BuildPackage,wfb-key))
