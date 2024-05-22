@@ -95,11 +95,13 @@ endef
 define Package/wfb-rx/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_rx $(1)/usr/bin/
+	$(LN) /usr/bin/wfb_rx $(1)/usr/bin/telemetry_rx
 endef
 
 define Package/wfb-tx/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_tx $(1)/usr/bin/
+	$(LN) /usr/bin/wfb_tx $(1)/usr/bin/telemetry_tx
 endef
 
 define Package/wfb-keygen/install
