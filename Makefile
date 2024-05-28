@@ -111,7 +111,8 @@ endef
 
 define Package/wfb-key/install
 	$(INSTALL_DIR) $(1)/etc/
-	$(INSTALL_DATA) $(CURDIR)/files/FPVue.key $(1)/etc/wfb.key
+	$(INSTALL_DATA) $(CURDIR)/files/FPVue.key $(1)/etc/
+	$(LN) /etc/FPVue.key $(1)/etc/gs.key
 endef
 
 $(eval $(call BuildPackage,wfb-rx))
