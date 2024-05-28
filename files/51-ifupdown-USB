@@ -1,0 +1,14 @@
+#!/bin/sh
+
+[ $INTERFACE = "USB" ] && {
+    case "${ACTION}" in
+    ifup)
+        /etc/init.d/wfb-rx restart
+        ;;
+    ifdown)
+        /etc/init.d/wfb-rx restart
+        ;;
+    esac
+}
+
+exit 0

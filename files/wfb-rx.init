@@ -1,0 +1,18 @@
+#!/bin/sh /etc/rc.common
+START=99
+STOP=1
+
+IP_PC="192.168.1.2"
+
+start() {
+    if [ -d /sys/class/net/usb0 ]; then
+        ip_gs=$(ip ro s | grep "default via" | grep usb0 | cut -d \  -f 3)
+    else
+        ip_gs=$IP_PC
+    fi
+    /usr/bin/wfb_rx -p 0 -c $ip_gs -u 5600 -K /etc/gs.key -i 7669206 phy0-mon0 > /dev/null &
+}
+
+stop() {
+    killall -q wfb_rx
+}
