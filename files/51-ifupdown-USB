@@ -3,10 +3,10 @@
 [ $INTERFACE = "USB" ] && {
     case "${ACTION}" in
     ifup)
-        /etc/init.d/wfb-rx restart
+        /etc/init.d/wfb-gs restart
         ;;
     ifdown)
-        /etc/init.d/wfb-rx restart
+        /etc/init.d/wfb-gs restart
         ;;
     esac
 }

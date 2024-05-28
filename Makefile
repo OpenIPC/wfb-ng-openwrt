@@ -96,7 +96,7 @@ define Package/wfb-rx/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_rx $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/wfb-rx.init $(1)/etc/init.d/wfb-rx
+	$(INSTALL_BIN) ./files/wfb-gs.init $(1)/etc/init.d/wfb-gs
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface/
 	$(INSTALL_DATA) ./files/51-ifupdown-USB $(1)/etc/hotplug.d/iface/51-ifupdown-USB
 	$(LN) /usr/bin/wfb_rx $(1)/usr/bin/telemetry_rx
