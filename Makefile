@@ -38,18 +38,18 @@ define Package/wfb-ng/description
   Next generation of long-range packet radio link based on raw WiFi radio
 endef
 
-define Package/wfb-gs
+define Package/wfb-rx
   $(call Package/$(PKG_NAME)/Default)
   DEPENDS:=+libpcap +libsodium +libstdcpp
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Wireless
-  TITLE+= groundstations include wfb_rx
+  TITLE+= wfb_rx
   URL:=https://github.com/svpcom/wfb-ng
 endef
 
 define Package/wfb-gs/description
-  $(Package/$(PKG_NAME)/description) groundstations include wfb_rx
+  $(Package/$(PKG_NAME)/description) RX
 endef
 
 define Package/wfb-tx
@@ -92,13 +92,23 @@ define Package/wfb-key/description
   $(Package/$(PKG_NAME)/description) wfb key used by FPVue
 endef
 
-define Package/wfb-gs/install
+define Package/wfb-gs
+  $(call Package/$(PKG_NAME)/Default)
+  DEPENDS:=+libpcap +libsodium +libstdcpp +wfb-rx +wfb-key
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Wireless
+  TITLE+= groundstations include wfb_rx and scripts
+  URL:=https://github.com/svpcom/wfb-ng
+endef
+
+define Package/wfb-gs/description
+  $(Package/$(PKG_NAME)/description) groundstations include wfb_rx scripts
+endef
+
+define Package/wfb-rx/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_rx $(1)/usr/bin/
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/wfb-gs.init $(1)/etc/init.d/wfb-gs
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface/
-	$(INSTALL_DATA) ./files/51-ifupdown-USB $(1)/etc/hotplug.d/iface/51-ifupdown-USB
 	$(LN) /usr/bin/wfb_rx $(1)/usr/bin/telemetry_rx
 endef
 
@@ -119,7 +129,15 @@ define Package/wfb-key/install
 	$(LN) /etc/FPVue.key $(1)/etc/gs.key
 endef
 
-$(eval $(call BuildPackage,wfb-gs))
+define Package/wfb-gs/install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/wfb-gs.init $(1)/etc/init.d/wfb-gs
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface/
+	$(INSTALL_DATA) ./files/51-ifupdown-USB $(1)/etc/hotplug.d/iface/51-ifupdown-USB
+endef
+
+$(eval $(call BuildPackage,wfb-rx))
 $(eval $(call BuildPackage,wfb-tx))
 $(eval $(call BuildPackage,wfb-keygen))
 $(eval $(call BuildPackage,wfb-key))
+$(eval $(call BuildPackage,wfb-gs))
