@@ -2,7 +2,8 @@
 START=99
 STOP=1
 
-IP_PC="192.168.1.2"
+ip_gs="224.0.0.1"
+ip_pc="192.168.1.2"
 wlan=phy0-mon0
 stream_video=0
 stream_telemetry=16
@@ -15,11 +16,7 @@ link_id=7669206
 # bandwidth=20
 
 start() {
-    if [ -d /sys/class/net/usb0 ]; then
-        ip_gs=$(ip ro s | grep "default via" | grep usb0 | cut -d \  -f 3)
-    else
-        ip_gs=$IP_PC
-    fi
+    [ -d /sys/class/net/usb0 ] || ip_gs=$ip_pc
     /usr/bin/wfb_rx -p "$stream_video" -c "$ip_gs" -u "$port_video" -K "$keydir/$unit.key" -i "$link_id" "$wlan" > /dev/null &
     /usr/bin/telemetry_rx -p "$stream_telemetry" -c "$ip_gs" -u "$port_telemetry" -K "$keydir/$unit.key" -i "$link_id" "$wlan" > /dev/null &
 }

@@ -132,8 +132,8 @@ endef
 define Package/wfb-gs/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/wfb-gs.init $(1)/etc/init.d/wfb-gs
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface/
-	$(INSTALL_DATA) ./files/51-ifupdown-USB $(1)/etc/hotplug.d/iface/51-ifupdown-USB
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/net/
+	$(INSTALL_DATA) ./files/51-rndis $(1)/etc/hotplug.d/net/51-rndis
 endef
 
 $(eval $(call BuildPackage,wfb-rx))
