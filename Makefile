@@ -115,7 +115,6 @@ endef
 define Package/wfb-tx/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_tx $(1)/usr/bin/
-	$(LN) /usr/bin/wfb_tx $(1)/usr/bin/telemetry_tx
 endef
 
 define Package/wfb-keygen/install
@@ -130,6 +129,9 @@ define Package/wfb-key/install
 endef
 
 define Package/wfb-gs/install
+	$(call Package/wfb-ng/install/wfb-rx,$1)
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(LN) /usr/bin/wfb_tx $(1)/usr/bin/telemetry_tx
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/wfb-gs.init $(1)/etc/init.d/wfb-gs
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/net/
