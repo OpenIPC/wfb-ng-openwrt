@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Add usb0 to br-lan
+bridge_device_num=$(uci show network | grep "name='br-lan'" | grep -o [0-9])
+[[ "$(uci -q get network.@device[$bridge_device_num].ports)" = "*usb0*" ]] || uci add_list network.@device[$bridge_device_num].ports='usb0'
+
+# Force OpenWrt as DHCP server
+[ "$(uci -q get dhcp.lan.force)" = "1" ] || uci set dhcp.lan.force='1'
+
+# Add multicast route
+[ "$(uci -q get network.multicast)" = "route" ] || {
+	uci -q batch << EOT
+	set network.multicast=route
+	set network.multicast.interface='lan'
+	set network.multicast.type='multicast'
+	set network.multicast.target='224.0.0.0/3'
+EOT
+}
+
+uci commit
+reload_config
+
+exit 0
