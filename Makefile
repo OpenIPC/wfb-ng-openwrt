@@ -132,6 +132,8 @@ define Package/wfb-gs/install
 	$(call Package/wfb-ng/install/wfb-rx,$1)
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_DATA) ./files/wfb-gs.default $(1)/etc/uci-defaults/90_wfb-gs
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_DATA) ./files/wfb-gs_C301_wifi.default $(1)/etc/uci-defaults/91_wfb-gs_C301_wifi.default
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(LN) /usr/bin/wfb_tx $(1)/usr/bin/telemetry_tx
 	$(INSTALL_DIR) $(1)/etc/init.d
