@@ -1,0 +1,28 @@
+#!/bin/sh
+
+. /lib/functions.sh
+config_load wfb-gs
+config_get wiphy_index config wiphy_index
+config_get channel config channel
+config_get bandwidth config bandwidth
+[[ "$(iw phy phy$wiphy_index info | grep "MHz \[$channel\]")" == "*MHz \[$channel\]*" ]] || {
+logger -t wfb-gs "phy${wiphy_index} does not support channel ${channel}!"
+logger -t wfb-gs "Check wiphy_index and channel settings in /etc/config/wfb-gs"
+logger -t wfb-gs "Restart the router to make the configuration take effect"
+exit 1
+}
+uci -q batch << EOT
+	del wireless.default_radio$wiphy_index.network
+	del wireless.default_radio$wiphy_index.encryption
+	set wireless.radio$wiphy_index.htmode='VHT$bandwidth'
+	set wireless.radio$wiphy_index.channel='$channel'
+	set wireless.radio$wiphy_index.cell_density='0'
+	set wireless.default_radio$wiphy_index.mode='monitor'
+	set wireless.default_radio$wiphy_index.ssid='wfb'
+	set wireless.default_radio$wiphy_index.ifname='phy$wiphy_index-wfb'
+	del wireless.radio$wiphy_index.disabled='1'
+EOT
+uci commit
+reload_config
+
+exit 0
