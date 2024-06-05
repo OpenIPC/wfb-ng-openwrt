@@ -140,6 +140,8 @@ define Package/wfb-gs/install
 	$(INSTALL_BIN) ./files/wfb-gs.init $(1)/etc/init.d/wfb-gs
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/net/
 	$(INSTALL_DATA) ./files/51-rndis $(1)/etc/hotplug.d/net/51-rndis
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) ./files/wfb-gs.config $(1)/etc/config/wfb-gs
 endef
 
 $(eval $(call BuildPackage,wfb-rx))

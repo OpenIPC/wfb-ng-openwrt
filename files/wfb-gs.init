@@ -2,26 +2,48 @@
 START=99
 STOP=1
 
-ip_gs="224.0.0.1"
-ip_pc="192.168.1.2"
-wlan=phy0-mon0
-stream_video=0
-stream_telemetry=16
-port_video=5600
-port_telemetry=14550
-keydir=/etc
-unit=gs
-link_id=7669206
-# channel=161
-# bandwidth=20
+USE_PROCD=1
+CONFFILE=wfb-gs
+USER="root"
 
-start() {
-    [ -d /sys/class/net/usb0 ] || ip_gs=$ip_pc
-    /usr/bin/wfb_rx -p "$stream_video" -c "$ip_gs" -u "$port_video" -K "$keydir/$unit.key" -i "$link_id" "$wlan" > /dev/null &
-    /usr/bin/telemetry_rx -p "$stream_telemetry" -c "$ip_gs" -u "$port_telemetry" -K "$keydir/$unit.key" -i "$link_id" "$wlan" > /dev/null &
+start_service() {
+	config_load "${CONFFILE}"
+	local ip_gs
+	local ip_pc
+	local wlan
+	local stream_video
+	local stream_telemetry
+	local port_video
+	local port_telemetry
+	local keydir
+	local unit
+	local link_id
+	local channel
+	local bandwidth
+
+	config_get ip_gs config ip_gs
+	config_get ip_pc config ip_pc
+	config_get wlan config wlan
+	config_get stream_video config stream_video
+	config_get stream_telemetry config stream_telemetry
+	config_get port_video config port_video
+	config_get port_telemetry config port_telemetry
+	config_get keydir config keydir
+	config_get unit config unit
+	config_get link_id config link_id
+	config_get channel config channel
+	config_get bandwidth config bandwidth
+
+	[ -d /sys/class/net/usb0 ] || ip_gs=$ip_pc
+
+	procd_open_instance
+	procd_set_param command /usr/bin/wfb_rx -p "$stream_video" -c "$ip_gs" -u "$port_video" -K "$keydir/$unit.key" -i "$link_id" "$wlan" > /dev/null
+	procd_set_param user "$USER"
+	procd_close_instance
+
+	procd_open_instance
+	procd_set_param command /usr/bin/telemetry_rx -p "$stream_telemetry" -c "$ip_gs" -u "$port_telemetry" -K "$keydir/$unit.key" -i "$link_id" "$wlan" > /dev/null
+	procd_set_param user "$USER"
+	procd_close_instance
 }
 
-stop() {
-    killall -q wfb_rx
-    killall -q telemetry_rx
-}
