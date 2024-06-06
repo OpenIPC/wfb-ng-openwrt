@@ -133,7 +133,7 @@ define Package/wfb-gs/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_DATA) ./files/wfb-gs_usb0.default.uci $(1)/etc/uci-defaults/90_wfb-gs_usb0
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_DATA) ./files/wfb-gs_wifi.default.uci $(1)/etc/uci-defaults/91_wfb-gs_wifi.default
+	$(INSTALL_DATA) ./files/wfb-gs_wifi.default.uci $(1)/etc/uci-defaults/91_wfb-gs_wifi
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(LN) /usr/bin/wfb_tx $(1)/usr/bin/telemetry_tx
 	$(INSTALL_DIR) $(1)/etc/init.d

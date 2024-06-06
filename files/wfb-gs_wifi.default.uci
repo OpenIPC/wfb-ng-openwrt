@@ -23,6 +23,6 @@ uci -q batch << EOT
 	del wireless.radio$wiphy_index.disabled='1'
 EOT
 uci commit
-reload_config
+/sbin/wifi reload
 
 exit 0
