@@ -34,6 +34,7 @@ start_service() {
 	config_get channel config channel
 	config_get bandwidth config bandwidth
 
+	[ -z $wiphy_index ] && { sh /rom/etc/uci-defaults/91_wfb-gs_wifi; sleep 10; config_load "${CONFFILE}"; config_get wiphy_index config wiphy_index; }
 	[[ "$(iw dev phy${wiphy_index}-wfb info | grep channel | cut -d \  -f 2)" == "$channel" && "$(iw dev phy${wiphy_index}-wfb info | grep channel | cut -d \  -f 6)" == "$bandwidth" ]] || { sh /rom/etc/uci-defaults/91_wfb-gs_wifi; sleep 10; }
 	[ -d /sys/class/net/usb0 ] || ip_gs=$ip_pc
 

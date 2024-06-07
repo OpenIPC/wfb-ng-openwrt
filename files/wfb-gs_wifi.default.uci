@@ -5,10 +5,18 @@ config_load wfb-gs
 config_get wiphy_index config wiphy_index
 config_get channel config channel
 config_get bandwidth config bandwidth
+[ -z $wiphy_index ] && {
+	for phy in $(ls /sys/class/ieee80211); do
+		[[ "$(iw phy $phy info | grep "MHz \[$channel\]")" == "*MHz \[$channel\]*" ]] && { wiphy_index=${phy:0-1}; break; }
+	done
+	uci set wfb-gs.config.wiphy_index="$wiphy_index"
+	logger -t wfb-gs "Auto set to $phy according to the channel ${channel}."
+}
 [[ "$(iw phy phy$wiphy_index info | grep "MHz \[$channel\]")" == "*MHz \[$channel\]*" ]] || {
 logger -t wfb-gs "phy${wiphy_index} does not support channel ${channel}!"
-logger -t wfb-gs "Check wiphy_index and channel settings in /etc/config/wfb-gs"
-logger -t wfb-gs "Restart the router to make the configuration take effect"
+logger -t wfb-gs "Check wiphy_index and channel settings in /etc/config/wfb-gs."
+logger -t wfb-gs "Set wiphy_index to blank for auto detect."
+logger -t wfb-gs "Restart wfb-gs to make the configuration take effect."
 exit 1
 }
 uci -q batch << EOT
