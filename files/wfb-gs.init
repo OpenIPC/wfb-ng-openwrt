@@ -20,6 +20,7 @@ start_service() {
 	local link_id
 	local channel
 	local bandwidth
+	local mode
 
 	config_get ip_gs config ip_gs
 	config_get ip_pc config ip_pc
@@ -33,10 +34,11 @@ start_service() {
 	config_get link_id config link_id
 	config_get channel config channel
 	config_get bandwidth config bandwidth
+	config_get mode config mode
 
 	[ -z $wiphy_index ] && { sh /rom/etc/uci-defaults/91_wfb-gs_wifi; sleep 10; config_load "${CONFFILE}"; config_get wiphy_index config wiphy_index; }
 	[[ "$(iw dev phy${wiphy_index}-wfb info | grep channel | cut -d \  -f 2)" == "$channel" && "$(iw dev phy${wiphy_index}-wfb info | grep channel | cut -d \  -f 6)" == "$bandwidth" ]] || { sh /rom/etc/uci-defaults/91_wfb-gs_wifi; sleep 10; }
-	[ -d /sys/class/net/usb0 ] || ip_gs=$ip_pc
+	[[ -d /sys/class/net/usb0 || "$mode" == "multicast" ]] || ip_gs=$ip_pc
 
 	procd_open_instance
 	procd_set_param command /usr/bin/wfb_rx -p "$stream_video" -c "$ip_gs" -u "$port_video" -K "$keydir/$unit.key" -i "$link_id" "phy$wiphy_index-wfb" > /dev/null
