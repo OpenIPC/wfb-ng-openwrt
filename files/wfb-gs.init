@@ -36,8 +36,8 @@ start_service() {
 	config_get bandwidth config bandwidth
 	config_get mode config mode
 
-	[ -z $wiphy_index ] && { sh /rom/etc/uci-defaults/91_wfb-gs_wifi; sleep 10; config_load "${CONFFILE}"; config_get wiphy_index config wiphy_index; }
-	[[ "$(iw dev phy${wiphy_index}-wfb info | grep channel | cut -d \  -f 2)" == "$channel" && "$(iw dev phy${wiphy_index}-wfb info | grep channel | cut -d \  -f 6)" == "$bandwidth" ]] || { sh /rom/etc/uci-defaults/91_wfb-gs_wifi; sleep 10; }
+	[[ -d /sys/class/ieee80211/phy${wiphy_index} && "$(iw dev phy${wiphy_index}-wfb info | grep channel | cut -d \  -f 2,6)" == "${channel} ${bandwidth}" ]] || {
+		sh /rom/etc/uci-defaults/91_wfb-gs_wifi; sleep 10; config_load "${CONFFILE}"; config_get wiphy_index config wiphy_index; }
 	[[ -d /sys/class/net/usb0 || "$mode" == "multicast" ]] || ip_gs=$ip_pc
 
 	procd_open_instance
