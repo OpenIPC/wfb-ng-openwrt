@@ -35,19 +35,140 @@ start_service() {
 	config_get channel config channel
 	config_get bandwidth config bandwidth
 	config_get mode config mode
+	config_get node config node
+	config_get server_port_video config server_port_video
+	config_get server_port_telemetry config server_port_telemetry
+	config_get ip_master config ip_master
 
 	[[ -d /sys/class/ieee80211/phy${wiphy_index} && "$(iw dev phy${wiphy_index}-wfb info | grep channel | cut -d \  -f 2,6)" == "${channel} ${bandwidth}" ]] || {
 		sh /rom/etc/uci-defaults/91_wfb-gs_wifi; sleep 10; config_load "${CONFFILE}"; config_get wiphy_index config wiphy_index; }
 	[[ -d /sys/class/net/usb0 || "$mode" == "multicast" ]] || ip_gs=$ip_pc
 
+
+	if [[ "$node" == "standalone" ]]; then
+		lan_device=$(uci -q get network.lan.device)
+		[ "$lan_device" = "br-lan" ] || uci -q batch << EOT
+		del network.wan.ipaddr
+		del network.wan.netmask
+		set network.wan.proto='dhcp'
+		set network.lan.ipaddr='192.168.1.1'
+		set network.wan.device="$lan_device"
+		set network.lan.device='br-lan'
+EOT
+		uci commit
+		reload_config
+		sleep 5
+		param_ext_video="-p $stream_video -c $ip_gs -u $port_video -K $keydir/$unit.key -i $link_id phy$wiphy_index-wfb"
+		param_ext_telemetry="-p $stream_telemetry -c $ip_gs -u $port_telemetry -K $keydir/$unit.key -i $link_id phy$wiphy_index-wfb"
+	elif [[ "$node" == "slave*" ]]; then
+		# 如果是slave则调换lan和wan对应的网线口。lan口设置IP为10.0.36.slave_num关闭
+		slave_num=${node:5}
+		[[ $slave_num -ge 1 && $slave_num -le 253 ]] || {
+			logger -t wfb-gs "WARING: node must be slave[1..253], set to 1"
+			slave_num=1
+		}
+		wan_device=$(uci -q get network.wan.device)
+		[ "$wan_device" = "br-lan" ] || uci -q batch << EOT
+		set network.wan.proto='static'
+		set network.wan.ipaddr="10.0.36.$slave_num"
+		set network.wan.netmask='255.255.255.0'
+		set network.wan.device='br-lan'
+		set network.lan.device="$wan_device"
+		set firewall.web='rule'
+		set firewall.web.name='web'
+		set firewall.web.src='wan'
+		set firewall.web.dest_port='80'
+		set firewall.web.target='ACCEPT'
+		set firewall.ssh='rule'
+		set firewall.ssh.name='ssh'
+		set firewall.ssh.src='wan'
+		set firewall.ssh.dest_port='22'
+		set firewall.ssh.target='ACCEPT'
+		set firewall.video='rule'
+		set firewall.video.name='video'
+		set firewall.video.src='wan'
+		set firewall.video.dest_port="$server_port_video"
+		set firewall.video.target='ACCEPT'
+		set firewall.telemetry='rule'
+		set firewall.telemetry.name='telemetry'
+		set firewall.telemetry.src='wan'
+		set firewall.telemetry.dest_port="$server_port_telemetry"
+		set firewall.telemetry.target='ACCEPT'
+EOT
+		wan_ipaddr=$(uci -q get network.wan.ipaddr)
+		[ "$wan_ipaddr" = "10.0.36.$slave_num" ] || uci -q set network.wan.ipaddr="10.0.36.$slave_num"
+		uci comit
+		reload_config
+		sleep 5
+		param_ext_video="-f -p $stream_video -c $ip_master -u $server_port_video -i $link_id phy$wiphy_index-wfb"
+		param_ext_telemetry="-f -p $stream_telemetry -c $ip_master -u $server_port_telemetry -i $link_id phy$wiphy_index-wfb"
+	elif [[ "$node" == "master" ]]; then
+		# 修改lan口IP为10.0.36.254，wan口的IP为192.168.1.1
+		wan_device=$(uci -q get network.wan.device)
+		[ "$wan_device" = "br-lan" ] || uci -q batch << EOT
+		set network.wan.proto='static'
+		set network.wan.ipaddr='10.0.36.254'
+		set network.wan.netmask='255.255.255.0'
+		set network.wan.device='br-lan'
+		set network.lan.device="$wan_device"
+		set firewall.web='rule'
+		set firewall.web.name='web'
+		set firewall.web.src='wan'
+		set firewall.web.dest_port='80'
+		set firewall.web.target='ACCEPT'
+		set firewall.ssh='rule'
+		set firewall.ssh.name='ssh'
+		set firewall.ssh.src='wan'
+		set firewall.ssh.dest_port='22'
+		set firewall.ssh.target='ACCEPT'
+		set firewall.video='rule'
+		set firewall.video.name='video'
+		set firewall.video.src='wan'
+		set firewall.video.dest_port="$server_port_video"
+		set firewall.video.target='ACCEPT'
+		set firewall.telemetry='rule'
+		set firewall.telemetry.name='telemetry'
+		set firewall.telemetry.src='wan'
+		set firewall.telemetry.dest_port="$server_port_telemetry"
+		set firewall.telemetry.target='ACCEPT'
+EOT
+		wan_ipaddr=$(uci -q get network.wan.ipaddr)
+		[ "$wan_ipaddr" = "$ip_master" ] || uci -q set network.wan.ipaddr="$ip_master"
+		uci commit
+		reload_config
+		sleep 5
+		param_ext_video="-f -p $stream_video -c 127.0.0.1 -u $server_port_video -i $link_id phy$wiphy_index-wfb"
+		param_ext_telemetry="-f -p $stream_telemetry -c 127.0.0.1 -u $server_port_telemetry -i $link_id phy$wiphy_index-wfb"
+
+		procd_open_instance
+		procd_set_param command /usr/bin/wfb_rx
+		procd_append_param command -a $server_port_video -K $keydir/$unit.key -i $link_id -c $ip_gs -u $port_video
+		procd_set_param user "$USER"
+		procd_set_param respawn 30 20 10
+		procd_close_instance
+
+		procd_open_instance
+		procd_set_param command /usr/bin/telemetry_rx
+		procd_append_param command -a $server_port_telemetry -K $keydir/$unit.key -i $link_id -c $ip_gs -u $port_telemetry
+		procd_set_param user "$USER"
+		procd_set_param respawn 30 20 10
+		procd_close_instance
+	else
+		logger -t wfb-gs "node must in [standalone slave master], drop to standalone!"
+		param_ext_video="-p $stream_video -c $ip_gs -u $port_video -K $keydir/$unit.key -i $link_id phy$wiphy_index-wfb"
+		param_ext_telemetry="-p $stream_telemetry -c $ip_gs -u $port_telemetry -K $keydir/$unit.key -i $link_id phy$wiphy_index-wfb"
+	fi
+
 	procd_open_instance
-	procd_set_param command /usr/bin/wfb_rx -p "$stream_video" -c "$ip_gs" -u "$port_video" -K "$keydir/$unit.key" -i "$link_id" "phy$wiphy_index-wfb" > /dev/null
+	procd_set_param command /usr/bin/wfb_rx
+	procd_append_param command $param_ext_video
 	procd_set_param user "$USER"
 	procd_set_param respawn 30 20 10
 	procd_close_instance
 
 	procd_open_instance
-	procd_set_param command /usr/bin/telemetry_rx -p "$stream_telemetry" -c "$ip_gs" -u "$port_telemetry" -K "$keydir/$unit.key" -i "$link_id" "phy$wiphy_index-wfb" > /dev/null
+	procd_set_param command /usr/bin/telemetry_rx
+	procd_append_param command $param_ext_telemetry
 	procd_set_param user "$USER"
 	procd_set_param respawn 30 20 10
 	procd_close_instance
