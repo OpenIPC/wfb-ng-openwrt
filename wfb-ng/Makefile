@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wfb-ng
-PKG_VERSION:=23.08.1
+PKG_VERSION:=24.08
 PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=LICENSE
@@ -16,7 +16,7 @@ PKG_CPE_ID:=cpe:/w:wfb-ng:wfb-ng
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/svpcom/wfb-ng/tar.gz/$(PKG_NAME)-$(PKG_VERSION)?
-PKG_HASH:=a24c425ad0963ced57c24ae8535692340aab39ff09897ecf5d11eb698f24356c
+PKG_HASH:=286ad0e0070657c9d75844d52785726a189bbd45da26477e0367bf21227ca24c
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/wfb-ng/default
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+libpcap +libsodium +libstdcpp
+  DEPENDS:=+libsodium +libstdcpp
   TITLE:=Next generation of long-range packet radio link based on raw WiFi radio
   URL:=https://github.com/svpcom/wfb-ng
   SUBMENU:=Wireless
@@ -54,7 +54,7 @@ endef
 
 define Package/wfb-tx
   $(call Package/$(PKG_NAME)/Default)
-  DEPENDS:=+libpcap +libsodium +libstdcpp
+  DEPENDS:=+libsodium +libstdcpp
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Wireless
@@ -66,9 +66,23 @@ define Package/wfb-tx/description
   $(Package/$(PKG_NAME)/description) TX
 endef
 
+define Package/wfb-tx-cmd
+  $(call Package/$(PKG_NAME)/Default)
+  DEPENDS:=+wfb-tx
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Wireless
+  TITLE+= wfb_tx_cmd
+  URL:=https://github.com/svpcom/wfb-ng
+endef
+
+define Package/wfb-tx-cmd/description
+  $(Package/$(PKG_NAME)/description) tx-cmd
+endef
+
 define Package/wfb-keygen
   $(call Package/$(PKG_NAME)/Default)
-  DEPENDS:=+libpcap +libsodium
+  DEPENDS:=+libsodium
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Wireless
@@ -117,6 +131,11 @@ define Package/wfb-tx/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_tx $(1)/usr/bin/
 endef
 
+define Package/wfb-tx-cmd/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_tx_cmd $(1)/usr/bin/
+endef
+
 define Package/wfb-keygen/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wfb_keygen $(1)/usr/bin/
@@ -146,6 +165,7 @@ endef
 
 $(eval $(call BuildPackage,wfb-rx))
 $(eval $(call BuildPackage,wfb-tx))
+$(eval $(call BuildPackage,wfb-tx-cmd))
 $(eval $(call BuildPackage,wfb-keygen))
 $(eval $(call BuildPackage,wfb-key))
 $(eval $(call BuildPackage,wfb-gs))
