@@ -11,7 +11,9 @@ example code
 
 ## Standard features
 USB-tethering to Android devices (Android TV, Android Phones, Android tablets, Meta Quest2/3). Requires sideloading PixelPilot (https://github.com/OpenIPC/PixelPilot)
+
 UDP videostream to port 5600 by default
+
 Set up master (aggregator) and slave (forwarder) nodes, only limited by the bandwidth availailable on your OpenWRT network.
 
 ## Non-standard features
@@ -36,6 +38,9 @@ Acquire a tested and known working device, flash latest OpenWRT (23.05.3 at the 
 
 ## Todo
 A section on how to build your own wfb_ng packages
+
 A section on how to build your own flashable image
+
 Create a flow chart of instances, ports and setup on typical use case with 2-4 wfb-ngopenwrt devicees and integrate with a groundstation.
+
 Insert some pictures of working use cases (living room Android TV, Groundstation etc)
