@@ -5,6 +5,7 @@ WFB-NG for OpenWrt uses the special mechanic of "aggregation" from wfb_ng to bri
 ## Explanations & descriptions
 Forwarder: an instance of wfb_rx running in forwarding mode, it simply forwards the encrypted stream to an aggregator to decrypt and distribute to a reciever.
 example code
+
 Aggregator: an instance of wfb_rx running in aggregation mode, which takes one or many udp streams of encrypted data from wfb_rx instances running in forward mode.
 example code
 
@@ -22,7 +23,9 @@ At the moment, wfb_ng have some limitations with parsing wifi6/7 packages. There
 
 ## Tested devices
 In theory any WiFi4 router with 5GHz network should work 
+
 (WiFi4) Wifi Google (https://openwrt.org/toh/google/wifi)
+
 (WiFi4) TP-link CPE510  (https://openwrt.org/toh/tp-link/cpe510)
 
 ## Devices currently being tested / investigated for compatibility
