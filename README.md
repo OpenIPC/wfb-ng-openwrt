@@ -39,6 +39,10 @@ Acquire a tested and known working device, flash latest OpenWRT (23.05.3 at the 
 ## Link list for technical people
 https://github.com/svpcom/wfb-ng/wiki/wfb_tx-and-wfb_rx-reference
 
+## Joakim special distributed LAN configuration
+![image](https://github.com/user-attachments/assets/f8e70d06-f2d6-40ee-82a8-cd3969b59b5f)
+
+
 ## Todo
 A section on how to build your own wfb_ng packages
 
