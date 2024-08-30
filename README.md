@@ -1,6 +1,6 @@
 # wfb-ng-openwrt
 
-WFB-NG for OpenWrt uses the special mechanic of "aggregation" from wfb_ng to bring together data streams from many "forwarders" for data multiversity over an extended LAN, suing both physical ethernet cables and 2,4ghz as backhaul channel.
+WFB-NG for OpenWrt uses the special mechanic of "aggregation" from wfb_ng to bring together data streams from many "forwarders" for data multiversity over an extended LAN, using both physical ethernet cables and 2,4ghz as backhaul channel.
 
 ## Explanations & descriptions
 Forwarder: an instance of wfb_rx running in forwarding mode, it simply forwards the encrypted stream to an aggregator to decrypt and distribute to a reciever.
@@ -35,6 +35,9 @@ In theory any WiFi4 router with 5GHz network should work
 
 ## Setup process
 Acquire a tested and known working device, flash latest OpenWRT (23.05.3 at the time of writing). If using a router from the "Tested devices" section, download pre-compiled wfb_ng packages.
+
+## Link list for technical people
+https://github.com/svpcom/wfb-ng/wiki/wfb_tx-and-wfb_rx-reference
 
 ## Todo
 A section on how to build your own wfb_ng packages
