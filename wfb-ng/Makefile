@@ -8,15 +8,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wfb-ng
-PKG_VERSION:=24.08
+PKG_VERSION:=24.08.1
 PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=LICENSE
-PKG_CPE_ID:=cpe:/w:wfb-ng:wfb-ng
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_VERSION:=2a019d54fc7fd4f54c66d073eb3c22743185ec31
 PKG_SOURCE_URL:=https://codeload.github.com/svpcom/wfb-ng/tar.gz/$(PKG_NAME)-$(PKG_VERSION)?
-PKG_HASH:=286ad0e0070657c9d75844d52785726a189bbd45da26477e0367bf21227ca24c
+PKG_HASH:=204ac06cfd9bf0f9ed464cb53f22a1a24e2f06de37b4db578e624a491a1c782b
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1
@@ -24,6 +24,13 @@ PKG_BUILD_PARALLEL:=1
 PKG_MAINTAINER:=Ruixi Zhou <zhouruixi@gmail.com>
 
 include $(INCLUDE_DIR)/package.mk
+
+define Build/Compile
+  $(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)/$(MAKE_PATH) \
+	  $(MAKE_FLAGS) \
+	  VERSION=$(PKG_VERSION) COMMIT=$(PKG_SOURCE_VERSION) \
+	  all_bin
+endef
 
 define Package/wfb-ng/default
   SECTION:=net
