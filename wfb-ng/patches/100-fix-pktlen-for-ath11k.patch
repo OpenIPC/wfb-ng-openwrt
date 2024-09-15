@@ -1,0 +1,10 @@
+--- a/src/rx.cpp
++++ b/src/rx.cpp
+@@ -242,6 +242,7 @@ void Receiver::loop_iter(void)
+         /* discard the radiotap header part */
+         pkt += iterator._max_length;
+         pktlen -= iterator._max_length;
++	pktlen -= 8 ;
+ 
+         //fprintf(stderr, "CAPTURE: mcs: %u, bw: %u\n", mcs_index, bandwidth);
+         if (pktlen > (int)sizeof(ieee80211_header))
